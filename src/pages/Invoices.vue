@@ -186,7 +186,7 @@
                 <div class="row justify-between align-center q-mb-md">
                   <span class="text-body2 text-weight-bold">Wise Transfer</span>
                   <img
-                    src="/public/images/wise-logo.png"
+                    src="/images/wise-logo.png"
                     alt="wise-logo"
                     width="50"
                     height="15"
