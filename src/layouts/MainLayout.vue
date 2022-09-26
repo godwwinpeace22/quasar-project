@@ -3,28 +3,30 @@
     <q-header>
       <q-toolbar class="bg-white text-black">
         <q-toolbar-title> Paypay </q-toolbar-title>
+        <q-btn flat round icon="menu" v-if="$q.screen.xs">
+          <q-menu>
+            <q-list style="min-width: 100px">
+              <q-item
+                clickable
+                v-for="item in menuList"
+                :key="item.title"
+                :to="item.to"
+              >
+                {{ item.title }}
+              </q-item>
+            </q-list>
+          </q-menu>
+        </q-btn>
 
-        <q-tabs v-model="tab" inline-label active-color="#353085">
-          <q-route-tab name="Dashboard" label="Dashboard" icon="home" to="/" />
+        <q-tabs v-model="tab" inline-label active-color="#353085" v-else>
           <q-route-tab
-            name="Invoices"
-            label="Invoices"
-            icon="mail"
-            to="/invoices"
+            v-for="item in menuList"
+            :key="item.title"
+            :name="item.title"
+            :label="item.title"
+            :icon="item.icon"
+            :to="item.to"
           />
-          <q-route-tab
-            name="Wallet"
-            label="Wallet"
-            icon="wallet"
-            to="/wallet"
-          />
-          <q-route-tab
-            name="Activity"
-            label="Activity"
-            icon="chart"
-            to="/activity"
-          />
-          <q-route-tab name="Help" label="Help" icon="phone" to="help" />
         </q-tabs>
       </q-toolbar>
     </q-header>
@@ -37,50 +39,32 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
-import EssentialLink from 'components/EssentialLink.vue';
 
-const linksList = [
+const menuList = [
   {
-    title: 'Docs',
-    caption: 'quasar.dev',
-    icon: 'school',
-    link: 'https://quasar.dev',
+    title: 'Dashboard',
+    to: '/',
+    icon: 'home',
   },
   {
-    title: 'Github',
-    caption: 'github.com/quasarframework',
-    icon: 'code',
-    link: 'https://github.com/quasarframework',
+    title: 'Invoices',
+    to: '/invoices',
+    icon: 'mail',
   },
   {
-    title: 'Discord Chat Channel',
-    caption: 'chat.quasar.dev',
-    icon: 'chat',
-    link: 'https://chat.quasar.dev',
+    title: 'Wallets',
+    to: '/wallet',
+    icon: 'wallet',
   },
   {
-    title: 'Forum',
-    caption: 'forum.quasar.dev',
-    icon: 'record_voice_over',
-    link: 'https://forum.quasar.dev',
+    title: 'Activity',
+    to: '/activity',
+    icon: 'chart',
   },
   {
-    title: 'Twitter',
-    caption: '@quasarframework',
-    icon: 'rss_feed',
-    link: 'https://twitter.quasar.dev',
-  },
-  {
-    title: 'Facebook',
-    caption: '@QuasarFramework',
-    icon: 'public',
-    link: 'https://facebook.quasar.dev',
-  },
-  {
-    title: 'Quasar Awesome',
-    caption: 'Community Quasar projects',
-    icon: 'favorite',
-    link: 'https://awesome.quasar.dev',
+    title: 'Help',
+    to: '/help',
+    icon: 'phone',
   },
 ];
 
@@ -96,7 +80,7 @@ export default defineComponent({
 
     return {
       tab: ref(''),
-      essentialLinks: linksList,
+      menuList,
       leftDrawerOpen,
       toggleLeftDrawer() {
         leftDrawerOpen.value = !leftDrawerOpen.value;
