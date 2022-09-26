@@ -25,23 +25,25 @@
             </q-item-section>
 
             <q-item-section top class="col-2 gt-sm">
-              <q-item-label class="q-mt-sm text-weight-bold text-capitalize"
-                >Dipa Inhouse</q-item-label
-              >
+              <q-item-label class="q-mt-sm text-weight-bold text-capitalize">{{
+                customer?.name
+              }}</q-item-label>
               <q-item-label caption lines="1">
-                hello@dipainhouse.com
+                {{ customer?.email }}
               </q-item-label>
             </q-item-section>
 
             <q-item-section side style="width: 100%">
               <q-item-label lines="1">
-                <span class="text-grey-8"> Ihen Boulevard Street 101</span>
+                <span class="text-grey-8">
+                  {{ customer?.address?.street }}</span
+                >
               </q-item-label>
               <q-item-label caption lines="1">
-                Malong City, 65115
+                {{ customer?.address.city }}
               </q-item-label>
               <q-item-label caption lines="1">
-                East Java, Indonesia
+                {{ customer?.address?.state }}, {{ customer?.address?.country }}
               </q-item-label>
             </q-item-section>
           </q-item>
@@ -59,13 +61,16 @@
             <div class="row">
               <div class="col-xs-12 col-sm-6">
                 <div class="text-weight-medium q-mb-xs">Invoice Number</div>
-                <div class="q-mb-xs text-weight-medium">INV-2022-010</div>
+                <div class="q-mb-xs text-weight-medium">
+                  {{ invoice?.invoiceNumber }}
+                </div>
                 <div class="q-mb-xs">
-                  <span class="text-weight-medium">Issue Date:</span> 11 Jan
-                  2022
+                  <span class="text-weight-medium">Issue Date:</span>
+                  {{ invoice?.issuedDate }}
                 </div>
                 <div>
-                  <span class="text-weight-medium">Due Date</span>: 18 Jan 2022
+                  <span class="text-weight-medium">Due Date</span>:
+                  {{ invoice?.dueDate }}
                 </div>
               </div>
               <div
@@ -73,13 +78,17 @@
                 :class="$q.screen.gt.xs ? 'text-right' : 'text-left q-mt-sm'"
               >
                 <div class="text-weight-medium">Billed to</div>
-                <div class="q-mb-xs">INV-2022-010</div>
+                <div class="q-mb-xs">{{ invoice?.billingAddress?.name }}</div>
                 <div class="q-mb-xs">
-                  <span class="text-weight-medium">Issue Date</span>: 11 Jan
-                  2022
+                  <span class="text-weight-medium">{{
+                    invoice?.billingAddress?.company
+                  }}</span>
                 </div>
                 <div>
-                  <span class="text-weight-medium">Due Date</span>: 18 Jan 2022
+                  <span class="text-weight-medium"
+                    >{{ invoice?.billingAddress?.city }},
+                    {{ invoice?.billingAddress?.country }}</span
+                  >
                 </div>
               </div>
             </div>
@@ -96,7 +105,6 @@
             <q-btn
               color="grey-4"
               text-color="primary"
-              glossy
               unelevated
               icon="camera_enhance"
               label="Customize"
@@ -105,7 +113,11 @@
           </div>
         </div>
         <q-separator />
-        <div class="row q-gutter-lg q-my-md">
+        <div
+          v-for="item in invoice?.items"
+          :key="item.id"
+          class="row q-gutter-lg q-my-md"
+        >
           <div class="col-12 col-sm-5 text-grey-8">
             <div class="text-grey-8 q-mb-lg">Item Name</div>
             <q-input outlined v-model="itemName" bg-color="" />
@@ -184,19 +196,25 @@
                   <span class="text-grey-8 text-weight-light"
                     >Account Name:</span
                   >
-                  <span class="text-weight-medium"> Barly Vallendito</span>
+                  <span class="text-weight-medium">
+                    {{ invoice?.paymentMethod?.accountName }}</span
+                  >
                 </div>
                 <div class="q-mb-sm">
                   <span class="text-grey-8 text-weight-light"
                     >Account Number:</span
                   >
-                  <span class="text-weight-medium"> 9000 888 83334 3333</span>
+                  <span class="text-weight-medium">
+                    {{ invoice?.paymentMethod?.accountNumber }}</span
+                  >
                 </div>
                 <div class="q-mb-sm">
                   <span class="text-grey-8 text-weight-light"
                     >Routing Number:</span
                   >
-                  <span class="text-weight-medium"> 084009519</span>
+                  <span class="text-weight-medium">
+                    {{ invoice?.paymentMethod?.routingNumber }}</span
+                  >
                 </div>
               </q-card>
             </div>
@@ -228,46 +246,41 @@
 </template>
 
 <script lang="ts">
-import { Todo, Meta } from 'components/models';
+import { Invoice, Customer } from 'components/models';
 import { defineComponent, ref } from 'vue';
 
 export default defineComponent({
   name: 'InvoicesPage',
   components: {},
   setup() {
-    const todos = ref<Todo[]>([
-      {
-        id: 1,
-        content: 'ct1',
-      },
-      {
-        id: 2,
-        content: 'ct2',
-      },
-      {
-        id: 3,
-        content: 'ct3',
-      },
-      {
-        id: 4,
-        content: 'ct4',
-      },
-      {
-        id: 5,
-        content: 'ct5',
-      },
-    ]);
-    const meta = ref<Meta>({
-      totalCount: 1200,
-    });
+    let invoice = ref<Invoice>();
+    let customer = ref<Customer>();
+    let hours = ref(120);
+    let rate = ref(0);
+    let tax = ref(0);
+    let total = ref(0);
+
+    fetch('/api/invoices/1')
+      .then((res) => res.json())
+      .then((json) => {
+        console.log(json);
+        invoice.value = json.invoice;
+
+        fetch('/api/customers/' + json.invoice.customerId)
+          .then((res) => res.json())
+          .then((json) => {
+            console.log(json);
+            customer.value = json.customer;
+          });
+      });
     return {
-      todos,
-      meta,
+      invoice,
+      customer,
       itemName: ref('Payment Project - Moonlight Mobile Design'),
-      hours: ref(120),
-      rate: ref(40),
-      tax: ref(0),
-      total: ref(42000),
+      hours,
+      rate,
+      tax,
+      total,
       description: ref(''),
     };
   },

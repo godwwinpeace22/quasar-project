@@ -71,20 +71,12 @@ const menuList = [
 export default defineComponent({
   name: 'MainLayout',
 
-  components: {
-    // EssentialLink
-  },
+  components: {},
 
   setup() {
-    const leftDrawerOpen = ref(false);
-
     return {
       tab: ref(''),
       menuList,
-      leftDrawerOpen,
-      toggleLeftDrawer() {
-        leftDrawerOpen.value = !leftDrawerOpen.value;
-      },
     };
   },
 });
